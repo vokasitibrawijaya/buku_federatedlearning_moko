@@ -1,0 +1,61 @@
+# Docker Compose untuk Simulasi FL
+# 
+# Menjalankan:
+#   docker-compose up --build
+#
+# Dengan banyak klien:
+#   docker-compose up --build --scale client=5
+#
+# Stop:
+#   docker-compose down
+
+version: '3.8'
+
+services:
+  # Flower Server
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.server
+    container_name: fl_server
+    ports:
+      - "8080:8080"
+    environment:
+      - NUM_ROUNDS=10
+      - MIN_CLIENTS=2
+      - FRACTION_FIT=0.5
+    volumes:
+      - ../logs:/app/logs
+      - ../data:/app/data
+    networks:
+      - fl_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.socket(); s.connect(('localhost', 8080)); s.close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Flower Client (dapat di-scale)
+  client:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.client
+    depends_on:
+      server:
+        condition: service_healthy
+    environment:
+      - CLIENT_ID=${CLIENT_ID:-0}
+      - SERVER_ADDRESS=server:8080
+    volumes:
+      - ../data:/app/data
+    networks:
+      - fl_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+networks:
+  fl_network:
+    driver: bridge

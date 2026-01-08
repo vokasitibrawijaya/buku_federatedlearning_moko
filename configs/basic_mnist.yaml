@@ -1,0 +1,40 @@
+# basic_mnist.yaml
+# Konfigurasi dasar untuk eksperimen MNIST IID
+
+experiment:
+  name: "mnist_iid_baseline"
+  description: "Baseline experiment with IID data distribution"
+  seed: 42
+
+data:
+  dataset: "mnist"
+  num_clients: 10
+  partition: "iid"
+  # Untuk non-IID, ubah ke:
+  # partition: "dirichlet"
+  # alpha: 0.5
+
+model:
+  type: "cnn"
+  num_classes: 10
+
+training:
+  num_rounds: 20
+  local_epochs: 1
+  batch_size: 32
+  learning_rate: 0.01
+  momentum: 0.9
+
+aggregation:
+  strategy: "fedavg"
+  fraction_fit: 0.5
+  fraction_evaluate: 0.5
+  min_fit_clients: 2
+  min_evaluate_clients: 2
+  min_available_clients: 5
+
+output:
+  log_dir: "./logs"
+  results_dir: "./results"
+  save_checkpoints: true
+  checkpoint_interval: 5

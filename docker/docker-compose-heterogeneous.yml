@@ -1,0 +1,131 @@
+# Docker Compose untuk Simulasi Heterogenitas
+#
+# Mensimulasikan klien dengan resource berbeda:
+# - Fast clients: Full CPU
+# - Slow clients: Limited CPU
+# - Unreliable clients: Dapat restart
+
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.server
+    container_name: fl_server_hetero
+    ports:
+      - "8080:8080"
+    environment:
+      - NUM_ROUNDS=20
+      - MIN_CLIENTS=3
+      - FRACTION_FIT=0.5
+    volumes:
+      - ../logs:/app/logs
+      - ../data:/app/data
+    networks:
+      - fl_hetero_network
+
+  # Fast Client 1
+  client_fast_1:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.client
+    depends_on:
+      - server
+    environment:
+      - CLIENT_ID=0
+      - SERVER_ADDRESS=server:8080
+    volumes:
+      - ../data:/app/data
+    networks:
+      - fl_hetero_network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+
+  # Fast Client 2
+  client_fast_2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.client
+    depends_on:
+      - server
+    environment:
+      - CLIENT_ID=1
+      - SERVER_ADDRESS=server:8080
+    volumes:
+      - ../data:/app/data
+    networks:
+      - fl_hetero_network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+
+  # Slow Client 1 (Limited CPU)
+  client_slow_1:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.client
+    depends_on:
+      - server
+    environment:
+      - CLIENT_ID=2
+      - SERVER_ADDRESS=server:8080
+    volumes:
+      - ../data:/app/data
+    networks:
+      - fl_hetero_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
+  # Slow Client 2 (Limited CPU)
+  client_slow_2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.client
+    depends_on:
+      - server
+    environment:
+      - CLIENT_ID=3
+      - SERVER_ADDRESS=server:8080
+    volumes:
+      - ../data:/app/data
+    networks:
+      - fl_hetero_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
+  # Unreliable Client (dengan restart policy)
+  client_unreliable:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.client
+    depends_on:
+      - server
+    environment:
+      - CLIENT_ID=4
+      - SERVER_ADDRESS=server:8080
+    volumes:
+      - ../data:/app/data
+    networks:
+      - fl_hetero_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+    restart: on-failure
+
+networks:
+  fl_hetero_network:
+    driver: bridge

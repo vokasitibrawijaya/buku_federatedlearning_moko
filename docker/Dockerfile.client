@@ -1,0 +1,23 @@
+# Dockerfile untuk Flower Client
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy code
+COPY basic/ ./basic/
+COPY configs/ ./configs/
+
+# Create data directory
+RUN mkdir -p /app/data
+
+# Environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+ENV CLIENT_ID=0
+
+# Run client
+CMD ["sh", "-c", "python basic/client.py --client-id $CLIENT_ID --server server:8080"]

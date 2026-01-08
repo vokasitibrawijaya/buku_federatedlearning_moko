@@ -1,0 +1,76 @@
+# hospital.yaml
+# Konfigurasi untuk studi kasus Kolaborasi RS Indonesia
+
+experiment:
+  name: "indonesia_hospital_xray"
+  description: "Kolaborasi 5 RS Indonesia untuk deteksi penyakit"
+  seed: 42
+
+scenario:
+  type: "hospital_collaboration"
+  hospitals:
+    - name: "RSUP Dr. Sardjito"
+      location: "Yogyakarta"
+      size: 10000
+      positive_ratio: 0.30
+      type: "rujukan"
+    - name: "RSUP Dr. Kariadi"
+      location: "Semarang"
+      size: 8000
+      positive_ratio: 0.25
+      type: "rujukan"
+    - name: "RSUD Dr. Soetomo"
+      location: "Surabaya"
+      size: 5000
+      positive_ratio: 0.10
+      type: "umum"
+    - name: "RS Hasan Sadikin"
+      location: "Bandung"
+      size: 3000
+      positive_ratio: 0.08
+      type: "umum"
+    - name: "RSUP Fatmawati"
+      location: "Jakarta"
+      size: 2000
+      positive_ratio: 0.05
+      type: "umum"
+
+data:
+  # Menggunakan MNIST sebagai proxy
+  # Di produksi: gunakan ChestX-ray14 atau dataset medis lain
+  dataset: "mnist"
+  num_clients: 5
+  partition: "custom_hospital"
+
+model:
+  type: "cnn"
+  # Di produksi: gunakan ResNet18 dengan pretrained weights
+  # type: "resnet18"
+  # pretrained: true
+
+training:
+  num_rounds: 50
+  local_epochs: 3
+  batch_size: 16
+  learning_rate: 0.001
+  
+  # Handling class imbalance
+  class_weight: "balanced"
+
+aggregation:
+  strategy: "fedavg"
+  # Alternative: FedProx untuk handling non-IID
+  # strategy: "fedprox"
+  # mu: 0.01
+  fraction_fit: 1.0  # Semua RS berpartisipasi
+  min_fit_clients: 5
+
+privacy:
+  # Tambahkan jika perlu
+  differential_privacy: false
+  epsilon: 1.0
+  delta: 0.00001
+
+output:
+  log_dir: "./logs/hospital"
+  results_dir: "./results/hospital"

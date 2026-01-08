@@ -1,0 +1,44 @@
+# noniid_cifar.yaml
+# Konfigurasi untuk eksperimen CIFAR-10 Non-IID
+
+experiment:
+  name: "cifar10_noniid"
+  description: "CIFAR-10 with non-IID Dirichlet distribution"
+  seed: 42
+
+data:
+  dataset: "cifar10"
+  num_clients: 10
+  partition: "dirichlet"
+  alpha: 0.3  # Lebih kecil = lebih non-IID
+
+model:
+  type: "cifar_cnn"
+  num_classes: 10
+
+training:
+  num_rounds: 50
+  local_epochs: 2
+  batch_size: 32
+  learning_rate: 0.01
+  momentum: 0.9
+  weight_decay: 0.0001
+
+aggregation:
+  strategy: "fedavg"
+  fraction_fit: 0.5
+  fraction_evaluate: 0.5
+  min_fit_clients: 3
+  min_evaluate_clients: 3
+  min_available_clients: 5
+
+# Untuk mengurangi client drift, bisa gunakan FedProx:
+# aggregation:
+#   strategy: "fedprox"
+#   mu: 0.01
+
+output:
+  log_dir: "./logs"
+  results_dir: "./results"
+  save_checkpoints: true
+  checkpoint_interval: 10
