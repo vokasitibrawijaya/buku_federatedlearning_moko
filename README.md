@@ -35,8 +35,8 @@ Repository ini berisi kode simulasi Federated Learning yang **siap dijalankan** 
 
 ```bash
 # Clone repository
-git clone https://github.com/atmoko-lab/fl-book-code.git
-cd fl-book-code
+git clone https://github.com/vokasitibrawijaya/buku_federatedlearning_moko.git
+cd buku_federatedlearning_moko
 
 # Buat virtual environment
 python -m venv fl_env
@@ -359,4 +359,4 @@ Jika menggunakan kode ini untuk penelitian, silakan sitasi:
 ## 📞 Kontak
 
 - Email: federated.learning.book@example.com
-- GitHub Issues: [Link](https://github.com/atmoko-lab/fl-book-code/issues)
+- GitHub Issues: [Link](https://github.com/vokasitibrawijaya/buku_federatedlearning_moko/issues)
