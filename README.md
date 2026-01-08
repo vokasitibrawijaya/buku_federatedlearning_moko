@@ -340,23 +340,3 @@ Pull requests welcome! Untuk perubahan besar, silakan buka issue terlebih dahulu
 MIT License - Silakan gunakan untuk keperluan akademik dan komersial.
 
 ---
-
-## 📖 Sitasi
-
-Jika menggunakan kode ini untuk penelitian, silakan sitasi:
-
-```bibtex
-@book{fl_book_2026,
-    title={Federated Learning: Teori dan Praktik},
-    author={Tim Penulis},
-    year={2026},
-    publisher={Penerbit}
-}
-```
-
----
-
-## 📞 Kontak
-
-- Email: federated.learning.book@example.com
-- GitHub Issues: [Link](https://github.com/vokasitibrawijaya/buku_federatedlearning_moko/issues)
